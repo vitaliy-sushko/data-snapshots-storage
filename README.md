@@ -4,12 +4,16 @@
 1. JDK 1.8
 1. Docker
 
-To start redis with sentinel (from project directory):
+#### Commands:
+
+It is assumed that ass command will be run from project directory.
+
+To start redis with sentinel:
 ```bash
 docker-compose -f container/docker-compose.yml up -d
 ```
 
-To shutdown redis with sentinel (from project directory):
+To shutdown redis with sentinel:
 ```bash
 docker-compose -f container/docker-compose.yml down
 ```
@@ -24,7 +28,7 @@ To start application:
 ./gradlew bootRun
 ``` 
 
-To run test request (from project directory):
+To run test requests:
 ```bash
 ./test_requests/curl.sh
 ```
