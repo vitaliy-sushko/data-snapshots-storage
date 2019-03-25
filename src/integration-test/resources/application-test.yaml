@@ -1,0 +1,15 @@
+spring:
+  groovy.template.check-template-location: false
+  servlet:
+    multipart:
+      max-file-size: 2KB
+      max-request-size: 2KB
+
+logging:
+  level:
+    ROOT: INFO
+    org:
+      springframework:
+        web: ERROR
+
+server.tomcat.accesslog.enabled: true

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 @Import(ApplicationConfig.class)
 public class SnapshotStorageApp {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SnapshotStorageApp.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(SnapshotStorageApp.class, args);
+  }
 }

@@ -2,14 +2,19 @@ package com.example.data.snapshots.storage.api
 
 import com.example.data.snapshots.storage.IntegrationTest
 import com.example.data.snapshots.storage.config.WebConfig
+import com.example.data.snapshots.storage.service.SnapshotProcessingOrchestrator
 import org.junit.experimental.categories.Category
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import spock.lang.Specification
+import spock.mock.DetachedMockFactory
 
 import static java.nio.charset.StandardCharsets.UTF_8
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -17,18 +22,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(DataSnapshotsStorageController)
-@ContextConfiguration(classes = WebConfig)
+@ContextConfiguration(classes = [WebConfig, Mocks])
+@TestPropertySource(locations = "classpath:application-test.yaml")
 @Category(IntegrationTest)
 class DataSnapshotsStorageControllerTest extends Specification {
 
     @Autowired
     private MockMvc mockMvc
 
-    def "when send post with plain text file is performed then status is OK"() {
+    def "when send post with plain text file then status is OK"() {
         given:
         def file = new MockMultipartFile(
                 "snapshot",
                 "PRIMARY_KEY,NAME,DESCRIPTION,UPDATED_TIMESTAMP\n".getBytes(UTF_8))
+
+        when:
+        def results = mockMvc.perform(multipart("/data/snapshot/upload").file(file)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .characterEncoding(UTF_8.name()))
+
+        then:
+        results.andExpect(status().isOk())
+    }
+
+    def "when send post with null content then status is noT OK"() {
+        given:
+        def file = new MockMultipartFile("snapshot", null)
 
         when:
         def results = mockMvc.perform(multipart("/data/snapshot/upload").file(file)
@@ -57,6 +76,16 @@ class DataSnapshotsStorageControllerTest extends Specification {
 
         then:
         results.andExpect(status().isNoContent())
+    }
+
+    @TestConfiguration
+    static class Mocks {
+        def factory = new DetachedMockFactory()
+
+        @Bean
+        SnapshotProcessingOrchestrator snapshotProcessingOrchestrator() {
+            factory.Mock(SnapshotProcessingOrchestrator)
+        }
     }
 
 }

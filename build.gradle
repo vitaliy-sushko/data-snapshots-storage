@@ -48,7 +48,7 @@ repositories {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-mainClassName = 'data.snapshots.storage.App'
+mainClassName = 'com.example.data.snapshots.storage.SnapshotStorageApp'
 version =  '0.0.1'
 
 ext['slf4j.version'] = '1.7.20'
@@ -57,7 +57,8 @@ ext {
     guavaVersion = '27.0.1-jre'
     groovyVersion = '2.5.6'
     junitVersion = '4.12'
-    jodaTimeVersion = '2.10.1'
+    embedResdisVersion = '0.6'
+    jedisVersion = '2.9.0'
 }
 
 dependencies {
@@ -67,12 +68,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation "com.google.guava:guava:$guavaVersion"
     implementation 'org.hibernate.validator:hibernate-validator'
-    implementation "joda-time:joda-time:$jodaTimeVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+    implementation "redis.clients:jedis:$jedisVersion"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.codehaus.groovy:groovy-all:$groovyVersion"
     testImplementation "org.spockframework:spock-core:$spockVersion"
     testImplementation "org.spockframework:spock-spring:$spockVersion"
     testImplementation "junit:junit:$junitVersion"
+    testImplementation "com.github.kstyrc:embedded-redis:$embedResdisVersion"
 }
 
 test {

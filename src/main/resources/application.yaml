@@ -2,8 +2,20 @@ spring:
   groovy.template.check-template-location: false
   servlet:
     multipart:
-      max-file-size: 128KB
-      max-request-size: 128KB
+      max-file-size: 10MB
+      max-request-size: 12MB
+  redis:
+    sentinel:
+      master: redis
+      nodes: localhost:26379
+
+data:
+  snapshot:
+    storage:
+      task.execution.pool:
+        core-pool-size: 4
+        max-pool-size: 16
+        queue-capacity: 1000
 
 logging:
   level:
@@ -12,4 +24,4 @@ logging:
       springframework:
         web: ERROR
 
-server.tomcat.accesslog.enabled: true
+sserver.tomcat.accesslog.enabled: true
