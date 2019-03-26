@@ -1,6 +1,7 @@
 package com.example.data.snapshots.storage.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -47,7 +48,9 @@ public class ApplicationConfig {
   public ObjectMapper objectMapper() {
     return Jackson2ObjectMapperBuilder.json()
         .serializationInclusion(JsonInclude.Include.NON_NULL)
-        .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .featuresToDisable(
+            SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .modulesToInstall(new JavaTimeModule())
         .dateFormat(new SimpleDateFormat(dateTimeFormat))
         .build();
@@ -60,6 +63,7 @@ public class ApplicationConfig {
     csvMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     csvMapper.registerModule(new JavaTimeModule());
     csvMapper.setDateFormat(new SimpleDateFormat(dateTimeFormat));
+    csvMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     return csvMapper;
   }
 

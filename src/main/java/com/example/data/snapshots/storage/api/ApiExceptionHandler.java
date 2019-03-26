@@ -16,19 +16,19 @@ public class ApiExceptionHandler {
   protected ResponseEntity<?> handleEntityNotFound(RecordNotFound ex) {
     ApiError apiError = new ApiError(String.format(
         "Record with primaryKey [%s] was not found ", ex.getPrimaryKey()));
-    return new ResponseEntity(apiError, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(ValidationFailedException.class)
   protected ResponseEntity<?> handleFailedProcessing(ValidationFailedException ex) {
-    ApiError apiError = new ApiError(ex.getMessage());
-    return new ResponseEntity(apiError, HttpStatus.BAD_REQUEST);
+    ApiError apiError = new ApiError(ex.getMessage(), ex.getErrors());
+    return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(FailedSnapshotProcessing.class)
   protected ResponseEntity<?> handleFailedProcessing(FailedSnapshotProcessing ex) {
     ApiError apiError = new ApiError(ex.getMessage());
-    return new ResponseEntity(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
 }

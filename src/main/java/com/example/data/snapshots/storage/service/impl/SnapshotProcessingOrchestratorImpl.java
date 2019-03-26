@@ -14,10 +14,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,27 +39,22 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
 
   @Override
   public void processSnapshot(MultipartFile dataSnapshot) {
-    AtomicInteger lineNumber = new AtomicInteger(0);
+    AtomicInteger lineNumberHolder = new AtomicInteger(0);
     try (InputStream inputStream = new BufferedInputStream(dataSnapshot.getInputStream());
         Reader reader = new InputStreamReader(inputStream);
         BufferedReader br = new BufferedReader(reader)) {
       final String header = br.readLine();
-      List<String> processingFailures = br.lines().skip(1L).map(line ->
-          CompletableFuture.supplyAsync(() ->
-              manager.processRecord(header + "\n" + line, lineNumber.incrementAndGet()), executor))
-          .map(this::getProcessingReulst)
-          .filter(Objects::nonNull)
-          .filter(pr -> pr instanceof ProcessingFailure)
+      List<ProcessingFailure> processingFailures = br.lines().skip(1L)
+          .map(getProcessLineFunction(lineNumberHolder, header))
+          .collect(Collectors.toList()).stream()
+          .map(CompletableFuture::join)
+          .filter(ProcessingFailure.class::isInstance)
           .map(ProcessingFailure.class::cast)
-          .map(failure -> String.format(
-              "Processing failed for line %d, with error(s): %s, %s",
-              failure.getLineNumber(),
-              failure.getMessage(),
-              String.valueOf(failure.getSnapshotRecord())))
           .collect(Collectors.toList());
 
       if (!processingFailures.isEmpty()) {
-        throw new ValidationFailedException(String.join("; ", processingFailures));
+        throw new ValidationFailedException(
+            "Snapshot processing failed with error", processingFailures);
       }
 
     } catch (IOException e) {
@@ -68,13 +62,18 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
     }
   }
 
-  private ProcessingResult getProcessingReulst(CompletableFuture<ProcessingResult> cf) {
-    try {
-      return cf.get();
-    } catch (InterruptedException | ExecutionException e) {
-      LOGGER.error(e.getMessage());
-    }
-    return null;
+  private Function<String, CompletableFuture<ProcessingResult>> getProcessLineFunction(
+      AtomicInteger lineNumberHolder, String header) {
+    return line -> {
+      final int lineNumber = lineNumberHolder.incrementAndGet();
+      return CompletableFuture.supplyAsync(
+          () -> manager.processRecord(header + "\n" + line, lineNumber), executor)
+          .exceptionally((t) -> {
+            String message = "Record processing failed with exception";
+            LOGGER.error(message, t);
+            return new ProcessingFailure(message, lineNumber);
+          });
+    };
   }
 
   @Override

@@ -39,20 +39,16 @@ public class SnapshotRecordProcessingManagerImpl implements SnapshotRecordProces
     if (snapshotRecord != null) {
       Set<ConstraintViolation<SnapshotRecord>> constraintViolations =
           validator.validate(snapshotRecord);
-      String primaryKey = snapshotRecord.getPrimaryKey();
       if (constraintViolations != null && !constraintViolations.isEmpty()) {
         return new ProcessingFailure(
             constraintViolations.stream()
                 .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining(";")), snapshotRecord, lineNumber);
+                .collect(Collectors.joining(";")), lineNumber);
       }
 
-      // replace record if already exists
-      if (repository.existsById(primaryKey)) {
-        repository.deleteById(primaryKey);
-      }
       repository.save(snapshotRecord);
     }
+
     return new ProcessingSuccess();
   }
 

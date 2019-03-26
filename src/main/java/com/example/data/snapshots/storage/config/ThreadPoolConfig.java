@@ -24,7 +24,7 @@ public class ThreadPoolConfig {
     executor.setCorePoolSize(properties.getCorePoolSize());
     executor.setMaxPoolSize(properties.getMaxPoolSize());
     executor.setQueueCapacity(properties.getQueueCapacity());
-    executor.setThreadNamePrefix("default_executor");
+    executor.setThreadNamePrefix("executor");
     executor.setRejectedExecutionHandler(new CallerRunsPolicy());
     executor.initialize();
     return executor;

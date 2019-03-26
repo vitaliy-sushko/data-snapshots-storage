@@ -1,5 +1,6 @@
 package com.example.data.snapshots.storage.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,27 +12,32 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @RedisHash("SnapshotRecord")
-@JsonPropertyOrder(value = {"PRIMARY_KEY", "NAME", "DESCRIPTION", "UPDATED_TIMESTAMP"})
+@JsonPropertyOrder(value = {"primaryKey", "name", "description", "updatedTimestamp"})
 public final class SnapshotRecord implements Serializable {
 
   private static final long serialVersionUID = -6683760972076985028L;
 
   @Id
-  @NotEmpty
-  @JsonProperty("PRIMARY_KEY")
+  @NotEmpty(message = "'PRIMARY_KEY' field value can not be empty or null")
+  @JsonProperty("primaryKey")
+  @JsonAlias("PRIMARY_KEY")
   private String primaryKey;
-  @NotEmpty
-  @JsonProperty("NAME")
+
+  @NotEmpty(message = "'NAME' field value can not be empty or null")
+  @JsonProperty("name")
+  @JsonAlias("NAME")
   private String name;
-  @JsonProperty("DESCRIPTION")
-  @NotEmpty
+
+  @NotEmpty(message = "'DESCRIPTION' field value can not be empty or null")
+  @JsonProperty("description")
+  @JsonAlias("DESCRIPTION")
   private String description;
-  @NotNull
-  @JsonProperty("UPDATED_TIMESTAMP")
+
+  @NotNull(message = "'UPDATED_TIMESTAMP' field value can not be null")
+  @JsonProperty("updatedTimestamp")
+  @JsonAlias("UPDATED_TIMESTAMP")
   @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
   private LocalDateTime updatedTime;
 

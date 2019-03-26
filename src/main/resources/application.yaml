@@ -8,12 +8,17 @@ spring:
     sentinel:
       master: redis
       nodes: localhost:26379
+    pool:
+      max-wait: -1
+      max-active: -1
+      max-idle: -1
+      min-idle: 16
 
 data:
   snapshot:
     storage:
       task.execution.pool:
-        core-pool-size: 4
+        core-pool-size: 16
         max-pool-size: 16
         queue-capacity: 1000
 
