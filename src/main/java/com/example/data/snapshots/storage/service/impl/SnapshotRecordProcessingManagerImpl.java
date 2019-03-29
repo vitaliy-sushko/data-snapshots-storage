@@ -1,10 +1,9 @@
 package com.example.data.snapshots.storage.service.impl;
 
-import com.example.data.snapshots.storage.exception.RecordNotFound;
+import com.example.data.snapshots.storage.exception.RecordMappingException;
+import com.example.data.snapshots.storage.exception.RecordNotFoundException;
+import com.example.data.snapshots.storage.exception.ValidationException;
 import com.example.data.snapshots.storage.mapper.CsvRecordMapper;
-import com.example.data.snapshots.storage.model.ProcessingResult;
-import com.example.data.snapshots.storage.model.ProcessingResult.ProcessingFailure;
-import com.example.data.snapshots.storage.model.ProcessingResult.ProcessingSuccess;
 import com.example.data.snapshots.storage.model.SnapshotRecord;
 import com.example.data.snapshots.storage.repository.SnapshotRecordRepository;
 import com.example.data.snapshots.storage.service.SnapshotRecordProcessingManager;
@@ -18,7 +17,8 @@ import org.slf4j.LoggerFactory;
 
 public class SnapshotRecordProcessingManagerImpl implements SnapshotRecordProcessingManager {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SnapshotRecordProcessingManagerImpl.class);
+  private final static Logger LOGGER = LoggerFactory
+      .getLogger(SnapshotRecordProcessingManagerImpl.class);
 
   private final CsvRecordMapper csvRecordMapper;
   private final SnapshotRecordRepository repository;
@@ -34,36 +34,33 @@ public class SnapshotRecordProcessingManagerImpl implements SnapshotRecordProces
   }
 
   @Override
-  public ProcessingResult processRecord(String line, int lineNumber) {
-    SnapshotRecord snapshotRecord = mapRecord(line);
-    if (snapshotRecord != null) {
-      Set<ConstraintViolation<SnapshotRecord>> constraintViolations =
-          validator.validate(snapshotRecord);
-      if (constraintViolations != null && !constraintViolations.isEmpty()) {
-        return new ProcessingFailure(
-            constraintViolations.stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining(";")), lineNumber);
-      }
-
-      repository.save(snapshotRecord);
+  public SnapshotRecord processRecord(String line, int lineNumber) {
+    SnapshotRecord snapshotRecord = mapRecord(line, lineNumber);
+    Set<ConstraintViolation<SnapshotRecord>> violations = validator.validate(snapshotRecord);
+    if (violations != null && !violations.isEmpty()) {
+      throw new ValidationException(violations.stream()
+          .map(ConstraintViolation::getMessage)
+          .collect(Collectors.joining("; ")), lineNumber);
     }
 
-    return new ProcessingSuccess();
+    return repository.save(snapshotRecord);
   }
 
-  private SnapshotRecord mapRecord(String line) {
+  private SnapshotRecord mapRecord(String line, int lineNumber) {
     try {
       return csvRecordMapper.mapRecord(line);
     } catch (IOException e) {
-      LOGGER.error("Record mapping failed", e);
+      String message = String.format(
+          "Snapshot record mapping failed with exception: %s", e.getMessage());
+      LOGGER.debug(message, e);
+      throw new RecordMappingException(message, lineNumber);
     }
-    return null;
   }
 
   @Override
   public SnapshotRecord getRecord(String primaryKey) {
-    return repository.findById(primaryKey).orElseThrow(() -> new RecordNotFound(primaryKey));
+    return repository.findById(primaryKey)
+        .orElseThrow(() -> new RecordNotFoundException(primaryKey));
   }
 
   @Override

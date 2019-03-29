@@ -1,10 +1,10 @@
 package com.example.data.snapshots.storage.exception;
 
-public class RecordNotFound extends RuntimeException {
+public class RecordNotFoundException extends RuntimeException {
 
   private final String primaryKey;
 
-  public RecordNotFound(String primaryKey) {
+  public RecordNotFoundException(String primaryKey) {
     this.primaryKey = primaryKey;
   }
 

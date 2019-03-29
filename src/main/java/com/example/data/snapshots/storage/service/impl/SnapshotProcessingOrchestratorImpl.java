@@ -1,9 +1,9 @@
 package com.example.data.snapshots.storage.service.impl;
 
-import com.example.data.snapshots.storage.exception.FailedSnapshotProcessing;
-import com.example.data.snapshots.storage.exception.ValidationFailedException;
+import com.example.data.snapshots.storage.exception.SnapshotProcessingFailures;
 import com.example.data.snapshots.storage.model.ProcessingResult;
 import com.example.data.snapshots.storage.model.ProcessingResult.ProcessingFailure;
+import com.example.data.snapshots.storage.model.ProcessingResult.ProcessingSuccess;
 import com.example.data.snapshots.storage.model.SnapshotRecord;
 import com.example.data.snapshots.storage.service.SnapshotProcessingOrchestrator;
 import com.example.data.snapshots.storage.service.SnapshotRecordProcessingManager;
@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -39,7 +41,7 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
 
   @Override
   public void processSnapshot(MultipartFile dataSnapshot) {
-    AtomicInteger lineNumberHolder = new AtomicInteger(0);
+    AtomicInteger lineNumberHolder = new AtomicInteger(1);
     try (InputStream inputStream = new BufferedInputStream(dataSnapshot.getInputStream());
         Reader reader = new InputStreamReader(inputStream);
         BufferedReader br = new BufferedReader(reader)) {
@@ -53,12 +55,17 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
           .collect(Collectors.toList());
 
       if (!processingFailures.isEmpty()) {
-        throw new ValidationFailedException(
-            "Snapshot processing failed with error", processingFailures);
+        throw new SnapshotProcessingFailures("Snapshot processed with error(s)",
+            processingFailures);
       }
 
     } catch (IOException e) {
-      throw new FailedSnapshotProcessing("Snapshot processing failed during file read", e);
+      String message = String.format(
+          "Snapshot processing failed during file read: %s", e.getMessage());
+      LOGGER.debug(message, e);
+      throw new SnapshotProcessingFailures(
+          message,
+          Collections.singletonList(new ProcessingFailure(-1, message)));
     }
   }
 
@@ -66,13 +73,11 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
       AtomicInteger lineNumberHolder, String header) {
     return line -> {
       final int lineNumber = lineNumberHolder.incrementAndGet();
-      return CompletableFuture.supplyAsync(
-          () -> manager.processRecord(header + "\n" + line, lineNumber), executor)
-          .exceptionally((t) -> {
-            String message = "Record processing failed with exception";
-            LOGGER.error(message, t);
-            return new ProcessingFailure(message, lineNumber);
-          });
+      return CompletableFuture.supplyAsync(() -> (ProcessingResult) new ProcessingSuccess(
+              Optional.ofNullable(manager.processRecord(header + "\n" + line, lineNumber))
+                  .orElseThrow(() -> new NullPointerException("Save failed with unknown error")))
+          , executor)
+          .exceptionally(throwable -> new ProcessingFailure(lineNumber, throwable.getMessage()));
     };
   }
 

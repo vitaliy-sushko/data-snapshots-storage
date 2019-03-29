@@ -2,6 +2,7 @@ package com.example.data.snapshots.storage.api;
 
 import com.example.data.snapshots.storage.model.SnapshotRecord;
 import com.example.data.snapshots.storage.service.SnapshotProcessingOrchestrator;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,13 +38,15 @@ public class DataSnapshotsStorageController {
       MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE})
   @ResponseStatus(code = HttpStatus.OK)
   public @ResponseBody
-  SnapshotRecord get(@PathVariable("id") String primaryKey) {
+  SnapshotRecord get(
+      @NotEmpty(message = "Primary key can't be empty") @PathVariable("id") String primaryKey) {
     return snapshotProcessingOrchestrator.getRecord(primaryKey);
   }
 
   @DeleteMapping(path = "/records/{id}")
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void delete(@PathVariable("id") String primaryKey) {
+  public void delete(
+      @NotEmpty(message = "Primary key can't be empty") @PathVariable("id") String primaryKey) {
     snapshotProcessingOrchestrator.deleteRecord(primaryKey);
   }
 
