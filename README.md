@@ -9,7 +9,7 @@ Prerequisites
 1. JDK 1.8
 1. Docker
 
-How to build and run
+How to build and run application
 ==============
 
 It is assumed that ass command will be run from project directory.
