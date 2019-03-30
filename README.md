@@ -1,10 +1,16 @@
-### Simple data snapshot storage
+data-snapshot-storage
+==============
 
-#### Prerequisites
+[![Build Status](https://travis-ci.org/vitaliy-sushko/data-snapshots-storage.svg?branch=master)](https://travis-ci.org/vitaliy-sushko/data-snapshots-storage)
+
+Prerequisites
+==============
+
 1. JDK 1.8
 1. Docker
 
-#### Commands:
+How to build and run
+==============
 
 It is assumed that ass command will be run from project directory.
 
