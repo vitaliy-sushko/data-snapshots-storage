@@ -46,6 +46,17 @@ public class SnapshotRecordProcessingManagerImpl implements SnapshotRecordProces
     return repository.save(snapshotRecord);
   }
 
+  @Override
+  public SnapshotRecord getRecord(String primaryKey) {
+    return repository.findById(primaryKey)
+        .orElseThrow(() -> new RecordNotFoundException(primaryKey));
+  }
+
+  @Override
+  public void deleteRecord(String primaryKey) {
+    repository.deleteById(primaryKey);
+  }
+
   private SnapshotRecord mapRecord(String line, int lineNumber) {
     try {
       return csvRecordMapper.mapRecord(line);
@@ -57,14 +68,4 @@ public class SnapshotRecordProcessingManagerImpl implements SnapshotRecordProces
     }
   }
 
-  @Override
-  public SnapshotRecord getRecord(String primaryKey) {
-    return repository.findById(primaryKey)
-        .orElseThrow(() -> new RecordNotFoundException(primaryKey));
-  }
-
-  @Override
-  public void deleteRecord(String primaryKey) {
-    repository.deleteById(primaryKey);
-  }
 }

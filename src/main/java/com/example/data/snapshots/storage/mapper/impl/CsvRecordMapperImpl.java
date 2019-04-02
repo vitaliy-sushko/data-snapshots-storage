@@ -1,7 +1,7 @@
 package com.example.data.snapshots.storage.mapper.impl;
 
-import com.example.data.snapshots.storage.model.SnapshotRecord;
 import com.example.data.snapshots.storage.mapper.CsvRecordMapper;
+import com.example.data.snapshots.storage.model.SnapshotRecord;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;

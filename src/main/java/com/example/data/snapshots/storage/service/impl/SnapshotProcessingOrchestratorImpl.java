@@ -27,7 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrchestrator {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SnapshotProcessingOrchestratorImpl.class);
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(SnapshotProcessingOrchestratorImpl.class);
 
   private final SnapshotRecordProcessingManager manager;
   private final AsyncTaskExecutor executor;
@@ -46,7 +47,7 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
         Reader reader = new InputStreamReader(inputStream);
         BufferedReader br = new BufferedReader(reader)) {
       final String header = br.readLine();
-      List<ProcessingFailure> processingFailures = br.lines().skip(1L)
+      List<ProcessingFailure> processingFailures = br.lines()
           .map(getProcessLineFunction(lineNumberHolder, header))
           .collect(Collectors.toList()).stream()
           .map(CompletableFuture::join)
@@ -60,12 +61,11 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
       }
 
     } catch (IOException e) {
-      String message = String.format(
-          "Snapshot processing failed during file read: %s", e.getMessage());
+      String message = "Snapshot processing failed during file read";
       LOGGER.debug(message, e);
       throw new SnapshotProcessingFailures(
           message,
-          Collections.singletonList(new ProcessingFailure(-1, message)));
+          Collections.singletonList(new ProcessingFailure(-1, e.getMessage())));
     }
   }
 
