@@ -1,8 +1,6 @@
 language: java
 jdk: oraclejdk8
 install: true
-script:
-  - ./gradlew clean build -s
 git:
   quiet: true
 branches:
@@ -15,3 +13,15 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+env:
+  global:
+    secure: "nYBa19wmuGYXznEoxHeu4Lmot5K86Hx7NlpSilWrYfVcwcgjbbIgJuSZqPC1vKD4/UVtXILYRnqO0nVQ24D9Gcrvw8YDK3dPeXYqgR0iWGgIqhOdWepGF37eEv8oovrAAIU3b9cqbjg6rdmvXdUyLuRKiFHDE+SRpapli/RuxkSTDDPqZW9brQy+1qhZ8noNnXYNWG9TADIs2APaCuO375PyS5gW/JjNG2ijBFsp7WKBdaomNyaTE7pnBUaSfynsI3TYtbWtyEkB4/ARiBqpqBwbOcomC1ajbWDvlf/ET2tE+atAEWHQK+tdCixYZKcNsMp868fmsArJ1jSnN8K07Aw2DZI2NsY2EN0nQNqTPFQDPdzsM77Heu/2hG6gwko+ERAYBWkGODq1wB2+LPDKfAe39vDZ6AsEHq5ykQG6Ur8pclqtHDVo7vgZ/6gcqSOyGU9V8XGTJ5nkUlDaziavtms3i0CqwBqBxWrSmlWnp3eq+zGGjm0TVLf3Z3+LK2hiT4Rj5VOXwWMoJ0sMPN1UfHqFtWdkwgH0PblYebK8SAzb0ZE+aUk+q5Enyby1z86fpJZ+dchgYV+z1uyBdVwMeyKICmR++Uf8KpZhCrYkZD8rp+EKOlX1KUyDvnJm6pojUB4873XV8vr8m+FVNMyn5r7sedLqIHnXROtpGlNmWv4="
+addons:
+  sonarcloud:
+    organization: "snapshot-storage"
+    token:
+      secure: $TOKEN
+
+script:
+  - ./gradlew clean build -s
+  - ./gradlew sonar-scanner
