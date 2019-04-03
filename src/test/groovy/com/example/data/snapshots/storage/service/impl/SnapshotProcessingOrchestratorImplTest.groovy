@@ -5,7 +5,6 @@ import com.example.data.snapshots.storage.UnitTest
 import com.example.data.snapshots.storage.exception.RecordNotFoundException
 import com.example.data.snapshots.storage.exception.SnapshotProcessingFailures
 import com.example.data.snapshots.storage.exception.ValidationException
-import com.example.data.snapshots.storage.model.SnapshotRecord
 import com.example.data.snapshots.storage.service.SnapshotProcessingOrchestrator
 import com.example.data.snapshots.storage.service.SnapshotRecordProcessingManager
 import org.junit.experimental.categories.Category
@@ -15,7 +14,6 @@ import org.springframework.mock.web.MockMultipartFile
 import spock.lang.Specification
 
 import java.nio.charset.Charset
-import java.time.LocalDateTime
 
 @Category(UnitTest)
 class SnapshotProcessingOrchestratorImplTest extends Specification {
@@ -32,7 +30,7 @@ class SnapshotProcessingOrchestratorImplTest extends Specification {
 
     def "sending non empty multipart file starts async processing of records"() {
         given: "File that contains header, data record, and empty string"
-        def line = StorageRecordUtil.getHeaderLine() + StorageRecordUtil.getRecordLine()
+        def line = StorageRecordUtil.getHeaderLine() + StorageRecordUtil.getValidRecordLine()
         def file = prepareMockFile((line + "\n"))
 
         when: "Orchestrator is called to process this file"
@@ -41,12 +39,7 @@ class SnapshotProcessingOrchestratorImplTest extends Specification {
         then: "No exception is thrown"
         noExceptionThrown()
         and: "Manager called only once to process the only data record"
-        1 * manager.processRecord(line, 2) >> new SnapshotRecord().tap {
-            primaryKey = 'Zamit'
-            name = 'South American sea lion'
-            description = 'Leopard, indian'
-            updatedTime = LocalDateTime.parse('2018-04-17T08:43:21.000')
-        }
+        1 * manager.processRecord(line, 2) >> StorageRecordUtil.prepareValidSnapshotRecord()
         and: "Executor have to run submitted runnable"
         1 * executor.execute(_) >> { Runnable task -> task.run() }
         and: "No more interactions expected with the manager"
@@ -103,7 +96,7 @@ class SnapshotProcessingOrchestratorImplTest extends Specification {
 
     def "when manager throws exception then SnapshotProcessingFailures exception is thrown"() {
         given: "File that contains header, data record, and empty string"
-        def line = StorageRecordUtil.getHeaderLine() + StorageRecordUtil.getRecordLine()
+        def line = StorageRecordUtil.getHeaderLine() + StorageRecordUtil.getValidRecordLine()
         def file = prepareMockFile((line + "\n"))
 
         when: "Orchestrator is called to process this file"
@@ -122,7 +115,7 @@ class SnapshotProcessingOrchestratorImplTest extends Specification {
 
     def "when manager returns null result NPE is thrown with specific message"() {
         given: "File that contains header, data record, and empty string"
-        def line = StorageRecordUtil.getHeaderLine() + StorageRecordUtil.getRecordLine()
+        def line = StorageRecordUtil.getHeaderLine() + StorageRecordUtil.getValidRecordLine()
         def file = prepareMockFile((line + "\n"))
 
         when: "Orchestrator is called to process this file"

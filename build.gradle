@@ -25,6 +25,9 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
     outputs.upToDateWhen { false }
     mustRunAfter test
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/integrationTest.exec")
+    }
 }
 
 check.dependsOn integrationTest
@@ -90,33 +93,16 @@ jacocoTestReport {
         csv.enabled false
         html.enabled true
     }
-}
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = 0.75
-            }
-        }
-
-        rule {
-            enabled = false
-            element = 'CLASS'
-            includes = ['com.example.data.snapshots.storage.*']
-            excludes = [
-                    'com.example.data.snapshots.storage.config.*',
-                    'com.example.data.snapshots.storage.model.*',
-                    'com.example.data.snapshots.storage.exception.*',
-                    'com.example.data.snapshots.storage.SnapshotStorageApp'
-            ]
-
-            limit {
-                counter = 'LINE'
-                value = 'TOTALCOUNT'
-                maximum = 0.3
-            }
-        }
+    sourceSets sourceSets.main
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                'com/example/data/snapshots/storage/config/**/*',
+                'com/example/data/snapshots/storage/model/**',
+                'com/example/data/snapshots/storage/SnapshotStorageApp.*'
+            ])
+        }))
     }
 }
 

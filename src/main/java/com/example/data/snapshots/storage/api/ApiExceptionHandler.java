@@ -14,7 +14,7 @@ public class ApiExceptionHandler {
   @ExceptionHandler(RecordNotFoundException.class)
   protected ResponseEntity<?> handleEntityNotFound(RecordNotFoundException ex) {
     ApiError apiError = new ApiError(String.format(
-        "Record with primaryKey [%s] was not found ", ex.getPrimaryKey()));
+        "Record with primaryKey [%s] was not found", ex.getPrimaryKey()));
     return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
   }
 
