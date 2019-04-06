@@ -3,6 +3,8 @@ data-snapshot-storage
 
 [![Build Status](https://travis-ci.org/vitaliy-sushko/data-snapshots-storage.svg?branch=master)](https://travis-ci.org/vitaliy-sushko/data-snapshots-storage)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=data-snapshot-storage&metric=alert_status)](https://sonarcloud.io/dashboard?id=data-snapshot-storage)
+
 Prerequisites
 ==============
 
