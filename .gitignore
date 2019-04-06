@@ -1,5 +1,7 @@
 # Ignore Gradle project-specific cache directory
 .gradle
+# Ignore environment specific configuration properties
+gradle.properties
 # Ignore Gradle build output directory
 build
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)

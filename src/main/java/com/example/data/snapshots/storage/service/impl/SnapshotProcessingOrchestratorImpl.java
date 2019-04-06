@@ -62,7 +62,7 @@ public class SnapshotProcessingOrchestratorImpl implements SnapshotProcessingOrc
 
     } catch (IOException e) {
       String message = "Snapshot processing failed during file read";
-      LOGGER.debug(message, e);
+      LOGGER.error(message);
       throw new SnapshotProcessingFailures(
           message,
           Collections.singletonList(new ProcessingFailure(-1, e.getMessage())));

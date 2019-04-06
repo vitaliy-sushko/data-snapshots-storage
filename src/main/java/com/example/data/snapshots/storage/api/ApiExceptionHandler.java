@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ApiExceptionHandler {
 
   @ExceptionHandler(RecordNotFoundException.class)
-  protected ResponseEntity<?> handleEntityNotFound(RecordNotFoundException ex) {
+  protected ResponseEntity handleEntityNotFound(RecordNotFoundException ex) {
     ApiError apiError = new ApiError(String.format(
         "Record with primaryKey [%s] was not found", ex.getPrimaryKey()));
     return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(SnapshotProcessingFailures.class)
-  protected ResponseEntity<?> handleProcessingFailures(SnapshotProcessingFailures ex) {
+  protected ResponseEntity handleProcessingFailures(SnapshotProcessingFailures ex) {
     ApiError apiError = new ApiError(ex.getMessage(), ex.getProcessingFailures());
     return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }

@@ -1,6 +1,7 @@
 package com.example.data.snapshots.storage.mapper.impl
 
 import com.example.data.snapshots.storage.StorageRecordUtil
+import com.example.data.snapshots.storage.UnitTest
 import com.example.data.snapshots.storage.config.ApplicationConfig
 import com.example.data.snapshots.storage.mapper.CsvRecordMapper
 import com.fasterxml.jackson.core.JsonLocation
@@ -8,11 +9,13 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectReader
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import org.junit.experimental.categories.Category
 import spock.lang.Specification
 
 import java.lang.reflect.Field
 import java.time.LocalDateTime
 
+@Category(UnitTest)
 class CsvRecordMapperImplTest extends Specification {
 
   CsvMapper csvMapper

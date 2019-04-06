@@ -1,10 +1,5 @@
 package com.example.data.snapshots.storage.model;
 
-import static com.example.data.snapshots.storage.ErrorMessageConstants.DESCRIPTION_CAN_NOT_BE_EMPTY_OR_NULL;
-import static com.example.data.snapshots.storage.ErrorMessageConstants.NAME_CAN_NOT_BE_EMPTY_OR_NULL;
-import static com.example.data.snapshots.storage.ErrorMessageConstants.PRIMARY_KEY_CAN_NOT_BE_EMPTY_OR_NULL;
-import static com.example.data.snapshots.storage.ErrorMessageConstants.UPDATED_TIMESTAMP_CAN_NOT_BE_NULL;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
@@ -25,22 +20,22 @@ public final class SnapshotRecord implements Serializable {
   private static final long serialVersionUID = -6683760972076985028L;
 
   @Id
-  @NotEmpty(message = PRIMARY_KEY_CAN_NOT_BE_EMPTY_OR_NULL)
+  @NotEmpty(message = "{primary.key.can.not.be.empty.or.null}")
   @JsonProperty("primaryKey")
   @JsonAlias("PRIMARY_KEY")
   private String primaryKey;
 
-  @NotEmpty(message = NAME_CAN_NOT_BE_EMPTY_OR_NULL)
+  @NotEmpty(message = "{name.can.not.be.empty.or.null}")
   @JsonProperty("name")
   @JsonAlias("NAME")
   private String name;
 
-  @NotEmpty(message = DESCRIPTION_CAN_NOT_BE_EMPTY_OR_NULL)
+  @NotEmpty(message = "{description.can.not.be.empty.or.null}")
   @JsonProperty("description")
   @JsonAlias("DESCRIPTION")
   private String description;
 
-  @NotNull(message = UPDATED_TIMESTAMP_CAN_NOT_BE_NULL)
+  @NotNull(message = "{updated.timestamp.can.not.be.null}")
   @JsonProperty("updatedTimestamp")
   @JsonAlias("UPDATED_TIMESTAMP")
   @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")

@@ -1,18 +1,22 @@
 package com.example.data.snapshots.storage.model;
 
-public interface ProcessingResult {
+import java.io.Serializable;
+
+public interface ProcessingResult extends Serializable {
 
   class ProcessingSuccess implements ProcessingResult {
 
-    private final SnapshotRecord snapshotRecord;
+    private static final long serialVersionUID = 292266722232707479L;
 
-    public ProcessingSuccess(SnapshotRecord snapshotRecord) {
-      this.snapshotRecord = snapshotRecord;
+    public ProcessingSuccess(SnapshotRecord ignored) {
     }
 
   }
 
   class ProcessingFailure implements ProcessingResult {
+
+    private static final long serialVersionUID = -2406528937073452581L;
+
     private final int lineNumber;
     private final String message;
 

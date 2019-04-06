@@ -17,8 +17,6 @@ import javax.validation.ConstraintViolation
 import javax.validation.Validator
 import java.time.LocalDateTime
 
-import static com.example.data.snapshots.storage.ErrorMessageConstants.NAME_CAN_NOT_BE_EMPTY_OR_NULL
-
 @Category(UnitTest)
 class SnapshotRecordProcessingManagerImplTest extends Specification {
 
@@ -92,8 +90,9 @@ class SnapshotRecordProcessingManagerImplTest extends Specification {
     and: "Invalid record that is mapped from given line"
     def snapshotRecord = StorageRecordUtil.prepareInvalidSnapshotRecord()
     and: "Constrain violation that return message"
+    def message = "'NAME' field value can not be empty or null"
     def constraintViolation = Mock(ConstraintViolation)
-    constraintViolation.getMessage() >> NAME_CAN_NOT_BE_EMPTY_OR_NULL
+    constraintViolation.getMessage() >> message
 
     when: "Manager is called with given key"
     manager.processRecord(line, lineNumber)
@@ -104,7 +103,7 @@ class SnapshotRecordProcessingManagerImplTest extends Specification {
     1 * validator.validate(snapshotRecord) >> [constraintViolation]
     then:
     def exception = thrown(ValidationException)
-    exception.message == NAME_CAN_NOT_BE_EMPTY_OR_NULL
+    exception.message == message
     exception.lineNumber == lineNumber
   }
 

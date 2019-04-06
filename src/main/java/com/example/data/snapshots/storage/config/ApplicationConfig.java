@@ -9,8 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import javax.annotation.PostConstruct;
-import javax.validation.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -25,9 +23,6 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @Import({WebConfig.class, ServiceConfig.class})
 public class ApplicationConfig {
 
-  @Autowired
-  private MessageSource messageSource;
-
   @Value("${data.snapshot.storage.date.time.format:yyyy-MM-dd'T'HH:mm:ss.SSS}")
   private String dateTimeFormat;
 
@@ -37,7 +32,7 @@ public class ApplicationConfig {
   }
 
   @Bean
-  public Validator validator() {
+  public LocalValidatorFactoryBean validator(MessageSource messageSource) {
     LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
     validator.setValidationMessageSource(messageSource);
     return validator;

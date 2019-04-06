@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class SnapshotRecordProcessingManagerImpl implements SnapshotRecordProcessingManager {
 
-  private final static Logger LOGGER = LoggerFactory
+  private static final Logger LOGGER = LoggerFactory
       .getLogger(SnapshotRecordProcessingManagerImpl.class);
 
   private final CsvRecordMapper csvRecordMapper;

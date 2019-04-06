@@ -7,46 +7,21 @@ plugins {
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id "org.unbroken-dome.test-sets" version "2.1.1"
     id 'jacoco'
-}
-
-sourceSets {
-    integrationTest {
-        groovy.srcDir file('src/integration-test/groovy')
-        resources.srcDir file('src/integration-test/resources')
-        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
-        runtimeClasspath += output + compileClasspath
-    }
-}
-
-task integrationTest(type: Test) {
-    description = 'Runs the integration tests.'
-    group = 'verification'
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-    outputs.upToDateWhen { false }
-    mustRunAfter test
-    jacoco {
-        destinationFile = file("$buildDir/jacoco/integrationTest.exec")
-    }
-}
-
-check.dependsOn integrationTest
-
-idea {
-    module {
-        testSourceDirs += sourceSets.integrationTest.groovy.srcDirs
-        testResourceDirs += sourceSets.integrationTest.resources.srcDirs
-        scopes.TEST.plus += [ configurations.integrationTestCompile ]
-    }
-}
-
-tasks.withType(Test) {
-    reports.html.destination = file("${reporting.baseDir}/${name}")
+    id "org.sonarqube" version "2.7"
 }
 
 repositories {
     mavenCentral()
     jcenter()
+}
+
+sourceSets {
+    integrationTest {
+        groovy.srcDir file('src/integrationTest/groovy')
+        resources.srcDir file('src/integrationTest/resources')
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -83,6 +58,32 @@ dependencies {
     testImplementation "com.github.kstyrc:embedded-redis:$embedResdisVersion"
 }
 
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/integrationTest.exec")
+    }
+}
+
+check.dependsOn integrationTest
+
+idea {
+    module {
+        testSourceDirs += sourceSets.integrationTest.groovy.srcDirs
+        testResourceDirs += sourceSets.integrationTest.resources.srcDirs
+        scopes.TEST.plus += [ configurations.integrationTestCompile ]
+    }
+}
+
+tasks.withType(Test) {
+    reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+
 jacoco {
     toolVersion = "0.8.3"
 }
@@ -103,6 +104,25 @@ jacocoTestReport {
                 'com/example/data/snapshots/storage/SnapshotStorageApp.*'
             ])
         }))
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "data-snapshot-storage"
+        property "sonar.organization", "snapshot-storage"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectName", "data-snapshots-storage"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.jacoco.reportPath", "build/jacoco/test.exec"
+        property "sonar.jacoco.itReportPath", "build/jacoco/integrationTest.exec"
+        properties['sonar.junit.reportsPath'] += "build/test-results/test"
+        properties['sonar.junit.reportsPath'] += "build/test-results/integrationTest"
+        properties['sonar.sources'] = sourceSets.main.java.srcDirs
+        properties['sonar.sources'] += sourceSets.main.resources.srcDirs
+        properties['sonar.tests'] += sourceSets.integrationTest.groovy.srcDirs
+        properties['sonar.tests'] += sourceSets.integrationTest.resources.srcDirs
+        property "sonar.coverage.exclusions", "**/*Generated.*, **/com/example/data/snapshots/storage/config/**/*, **/com/example/data/snapshots/storage/model/*, **/com/example/data/snapshots/storage/SnapshotStorageApp.*"
     }
 }
 
