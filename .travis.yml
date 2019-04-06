@@ -15,7 +15,7 @@ cache:
     - $HOME/.gradle/wrapper/
 addons:
   sonarcloud:
-    organization: "data-snapshot-storage"
+    organization: "snapshot-storage"
     token:
       secure: "iZ3aqLCpifV2Xs5fKagJkApNno8rjn3J8ePQyTibSbYOwoXw6d84sd+dk8bCR5Y6upp5J2JBmQHRiSuIQTSsrsE0OlfVo5dT9y27OpJX304QP+pjWBeQXmigRxeapGOqzq9YkZbr4m/bzzT/aoVAP6nFEdhT/0XGHmvWtMPgYLkv/ZlIOFcJqHNOUDG+bEUxQ5BLg35hZaFtGcVlGPiw8EyTMlRZgTzq0lkoSStQUEsYXITgs43fviS6isMcTdRL+SsEPS160q4EkS6lKYPd9202CmG9rQLDWYFGBZJB+rC2aUqCw+TEEfg7DP+7ZaSOKcq2BFV9YOlva3CZEtaT9FAMjxAqtrZQPBk+fVpPUlm/Ig3sK7oEuGeV1ntyr4IqhFuvDYKf5JN/mw4HVTLWYASAlTZCz/0cg4kSYFfHKBE0AW01o+Hbaumb1WqQJ/vVSTFXXAmv/DTtp518IQYrXQ8qcRTvlVDgnq/7A33Hfo5uP/e6gSSdKkT0PNrWz1Mw9ty8tmC5gbPq25Rt9Mu7w7ScNXtgN9JGKEGctW19/eCwNXkj+5xLn4+dZvQs0huUr35vKcv4X3jkSwje29UEC8kRZYOIld5zdBylInt1I2YIYp7svVt44ILgGMbMhuX3P2fKhRl7a/5UY7pwMEsy6IFkYS3ZmyPLFtr7GlFeBdc="
 
