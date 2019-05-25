@@ -12,14 +12,14 @@ Prerequisites
 How to build and run application
 ==============
 
-It is assumed that ass command will be run from project directory.
+It is assumed that all commands will be run from project directory.
 
 To start redis with sentinel:
 ```bash
 docker-compose -f container/docker-compose.yml up -d
 ```
 
-To shutdown redis with sentinel:
+To shutdown redis and sentinel:
 ```bash
 docker-compose -f container/docker-compose.yml down
 ```
@@ -38,4 +38,3 @@ To run test requests:
 ```bash
 ./test_requests/curl.sh
 ```
-     
