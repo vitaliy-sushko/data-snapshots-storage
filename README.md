@@ -6,7 +6,7 @@ data-snapshot-storage
 Prerequisites
 ==============
 
-1. JDK 1.8
+1. JDK 11
 1. Docker
 
 How to build and run application
