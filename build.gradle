@@ -90,9 +90,7 @@ jacoco {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
+        xml.enabled true
     }
     sourceSets sourceSets.main
     executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
@@ -114,8 +112,6 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.projectName", "data-snapshots-storage"
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.jacoco.reportPath", "build/jacoco/test.exec"
-        property "sonar.jacoco.itReportPath", "build/jacoco/integrationTest.exec"
         properties['sonar.junit.reportsPath'] += "build/test-results/test"
         properties['sonar.junit.reportsPath'] += "build/test-results/integrationTest"
         properties['sonar.sources'] = sourceSets.main.java.srcDirs
