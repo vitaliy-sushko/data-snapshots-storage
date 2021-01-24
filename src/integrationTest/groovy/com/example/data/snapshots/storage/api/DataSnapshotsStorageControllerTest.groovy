@@ -1,10 +1,10 @@
 package com.example.data.snapshots.storage.api
 
-import com.example.data.snapshots.storage.IntegrationTest
+
 import com.example.data.snapshots.storage.config.WebConfig
 import com.example.data.snapshots.storage.model.SnapshotRecord
 import com.example.data.snapshots.storage.service.SnapshotProcessingOrchestrator
-import org.junit.experimental.categories.Category
+import org.junit.jupiter.api.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(DataSnapshotsStorageController)
 @ContextConfiguration(classes = [WebConfig, Mocks])
 @TestPropertySource(locations = "classpath:application-test.yaml")
-@Category(IntegrationTest)
+@Tag("IntegrationTest")
 class DataSnapshotsStorageControllerTest extends Specification {
 
     @Autowired
